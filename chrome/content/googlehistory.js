@@ -1,9 +1,19 @@
 var googlehistory = function () {
     return { init: function() {
-      window.addEventListener("DOMContentLoaded", function(event){
-        var loc = event.target.location.href;
+      gBrowser.addEventListener("load", function(event){
+        var doc = event.originalTarget;
+
+        // is this an inner frame?
+        if (doc.defaultView.frameElement) {
+          return;
+        }
+        dump("Got here!");
+
+        var loc = doc.defaultView.location.href;
 	if(loc.substr(0,4) != "http")
 		return;
+
+        dump("And here!");
 
 	var url = googlehistory.getUrlToSendQueryFor(loc).split("#")[0];
 	var hash = googlehistory.awesomeHash(url);
@@ -11,7 +21,7 @@ var googlehistory = function () {
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", query, false);
 	xhr.send();
-      }, false);
+      }, true);
     },
 toHex8:function(b) {
 	return (b < 16 ? "0": "") + b.toString(16)
